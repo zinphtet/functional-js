@@ -1,100 +1,40 @@
-import './style.css';
-import javascriptLogo from './javascript.svg';
-import viteLogo from '/vite.svg';
-import { setupCounter } from './counter.js';
+import { map } from '/function/map';
+import { Books } from '/function/data';
+import { flatArr } from '/function/flatArr';
+import { filter } from '/function/filter';
+import { reduce } from './function/reduce';
+import { zip } from './function/zip';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Learning FP with JS</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`;
+const filtered = map(
+	filter(
+		flatArr(map(Books, (book) => book.bookDetails)),
+		(book) => book.rating[0] > 4.2
+	),
+	({ title, author }) => ({ title, author })
+);
+// console.log(filtered);
 
-setupCounter(document.querySelector('#counter'));
+const reduced = reduce([1, 2, 3, 4, 5, 6], (accum, val) => (accum += val * 5));
+// console.log(reduced);
 
-const forEach = (arr, fn) => {
-	for (let i = 0; i < arr.length; i++) fn(arr[i]);
-};
-
-const forEachObj = (obj, fn) => {
-	for (let prop in obj) {
-		if (obj.hasOwnProperty(prop)) {
-			fn(obj[prop]);
+// This is Great
+const goodReview = reduce(
+	flatArr(map(Books, (book) => book.bookDetails)),
+	(accum, { reviews }) => {
+		if (reviews[0]?.good) {
+			accum.good += reviews[0].good;
 		}
-	}
-};
+		if (reviews[0]?.excellent) {
+			accum.excellent += reviews[0].excellent;
+		}
+		return {
+			good: accum.good,
+			excellent: accum.excellent,
+		};
+	},
+	{ good: 0, excellent: 0 }
+);
+// console.log(goodReview);
 
-const unless = (predicate, fn) => {
-	if (!predicate) fn();
-};
-
-// calling forEach
-// forEach([1, 2, 3, 4, 5], (num) => {
-// 	unless(num % 2 != 0, () => console.log(num));
-// });
-
-const Times = (time, fn) => {
-	for (let i = 0; i < time; i++) {
-		fn(i);
-	}
-};
-const myFun = (num) => {
-	unless(num % 2 === 0, () => console.log(num));
-};
-// my function
-// Times(50, myFun);
-
-const every = (arr, fn) => {
-	let result = true;
-	for (let i = 0; i < arr.length; i++) {
-		result = result && fn(arr[i]);
-	}
-	return result;
-};
-
-// console.log(`Every ${every([NaN, NaN, NaN], isNaN)}`);
-// console.log(`Every ${every([12, -100, 45], Number.isInteger)}`);
-// console.log(`Every ${every(['hello', -100, 45], Number.isInteger)}`);
-
-const some = (arr, fn) => {
-	let result = false;
-	for (let i = 0; i < arr.length; i++) {
-		result = result || fn(arr[i]);
-	}
-
-	return result;
-};
-
-// console.log(`Some ${some([1, 2, 3, 4], isNaN)}`);
-// console.log(`Some ${some([1, 2, 3, 'hello'], Number.isInteger)}`);
-// console.log(`Some ${some([1, 2, 3, 4], isNaN)}`);
-
-let people = [
-	{ firstname: 'aaFirstName', lastname: 'cclastName' },
-	{ firstname: 'ccFirstName', lastname: 'aalastName' },
-	{ firstname: 'bbFirstName', lastname: 'bblastName' },
-];
-
-const comparator = (a, b) => {
-	return a.firstname < b.firstname ? -1 : a.firstname > b.lastname ? 1 : 0;
-};
-
-const sortBy = (prop) => {
-	return (a, b) => {
-		return a[prop] < b[prop] ? -1 : a[prop] > b[prop] ? 1 : 0;
-	};
-};
-people.sort(sortBy('lastname'));
-
-// console.log(people);
+const zippedArr = zip([1, 2, 3], [10, 20, 30, 40], (a, b) => a + b);
+// console.log(zippedArr);
