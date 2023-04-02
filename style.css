@@ -1,6 +1,8 @@
 html{
-  background: rgb(2,0,36);
-  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(189,157,92,1) 0%, rgba(160,166,117,1) 0%, rgba(141,171,134,1) 24%, rgba(125,176,148,1) 45%, rgba(105,187,88,1) 100%, rgba(0,212,255,1) 100%);
+  background: #DE6262;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #FFB88C, #DE6262);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #FFB88C, #DE6262); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  
 }
 #app{
   width: 100%;  

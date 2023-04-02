@@ -5,6 +5,13 @@ import { filter } from '/function/filter';
 import { reduce } from './function/reduce';
 import { zip } from './function/zip';
 import { curry, curry2 } from './function/curry';
+import { partial } from './function/partial';
+import { compose, composeN } from './function/compose';
+import { books } from './function/data';
+import { pipe } from './function/pipe';
+import { Container, createContainer } from './function/functor';
+import { newMaybe } from './function/maybe';
+
 const filtered = map(
 	filter(
 		flatArr(map(Books, (book) => book.bookDetails)),
@@ -88,3 +95,111 @@ const debugLogger = curry3(logger)('DEBUG');
 // errLogger('cannot find that', 24);
 // wrnLogger('this might be error next time', 34);
 // debugLogger('this is something useful', 37);
+
+let delayTenMs = partial(setTimeout, undefined, 1000);
+// delayTenMs(() => {
+// 	console.log('hello');
+// });
+
+const obj = {
+	name: 'mgmg',
+	age: 12,
+};
+
+const stringObj = JSON.stringify(obj, null, 2);
+// console.log(stringObj)
+
+const stringObjUsingPartial = partial(JSON.stringify, undefined, null, 2);
+// console.log(stringObjUsingPartial(obj));
+
+const add = (a) => a + 12;
+const multi = (a) => a * 5;
+
+// console.log(compose(multi, add)(3));
+
+// const titleAuthor = compose(map)
+
+// console.log(compose(Math.round, parseFloat)('12.2'));
+
+const filterBestBooks = partial(
+	filter,
+	undefined,
+	(book) => book.rating[0] >= 4.5
+);
+const projectAuthorAndTitle = partial(map, undefined, ({ author, title }) => ({
+	author,
+	title,
+}));
+const projectTitle = partial(map, undefined, ({ title }) => ({
+	title,
+}));
+const authorAndTitle = compose(projectTitle, filterBestBooks);
+
+const authorAndTitleForBestBooks = authorAndTitle(books);
+// console.log(authorAndTitleForBestBooks);
+
+// compose n number of function
+
+const splitWords = (str) => str.split(' ');
+const countWords = (arr) => arr.length;
+const evenOrOdd = (num) => (num % 2 === 0 ? 'even' : 'odd');
+
+const GivenStrEvenOrOdd = composeN(
+	evenOrOdd,
+	countWords,
+	splitWords
+)('Nann Phyo Htay Kywe Hola');
+
+// console.log(GivenStrEvenOrOdd);
+
+const CountWordss = composeN(countWords, splitWords);
+const EvOd = composeN(evenOrOdd, CountWordss)('This Is The Best');
+
+// console.log(EvOd);
+
+const result = pipe(splitWords, countWords, evenOrOdd)('This is Strange');
+// console.log(result);
+
+const value1 = new Container(5);
+// console.log(value1);
+
+// const value2 = new Container(100)
+
+const value2 = createContainer(200);
+// console.log(value2);
+
+const value3 = createContainer(createContainer(500));
+
+// console.log(value3)
+
+// let double = (x) => x * 2;
+// const value4 = createContainer(800).map(double).map((x)=>x/2)
+// console.log(value4)
+
+const maybe1 = newMaybe('zinpaing')
+	.map((value) => value.toUpperCase())
+	.map((v) => 'Mr .' + v);
+
+// console.log(maybe1);
+
+const maybe2 = newMaybe('200')
+	.map(() => undefined)
+	.map((value) => Number(value));
+
+// console.log(maybe2);
+
+const fetchUsers = async () => {
+	const res = await fetch('https://jsonplaceholder.typicode.com/users');
+	const data = await res.json();
+	console.log(typeof data);
+	const value = newMaybe(data).map((value) => {
+		if (!value.length || value.length === 0) {
+			return null;
+		}
+		return map(value, ({ address, name, email }) => ({ address, email, name }));
+	});
+
+	console.log(value);
+};
+
+fetchUsers();
