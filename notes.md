@@ -8,3 +8,5 @@ compose (x , compose (y,z)) === compose (compose(x,y),z)
 ## Functor is a plain object.
 
 ## Functor is an object, which implement a map contract!
+
+## Generators - Lazy evaluation

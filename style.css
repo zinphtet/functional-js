@@ -12,6 +12,9 @@ html{
   font-size: 2rem;
   word-wrap: break-word;
 }
+h1{
+  color: #fff;
+}
 span{
   color: blueviolet;
 }

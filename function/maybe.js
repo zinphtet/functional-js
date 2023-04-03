@@ -1,3 +1,5 @@
+// Functor
+
 const Maybe = function (value) {
 	this.value = value;
 };
